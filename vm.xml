@@ -1,0 +1,147 @@
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>gaming-new</name>
+  <uuid>b9e66b0a-7aff-4a34-bd5c-783c398c2472</uuid>
+  <memory unit='KiB'>8388608</memory>
+  <currentMemory unit='KiB'>8388608</currentMemory>
+  <vcpu placement='static'>8</vcpu>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='8'/>
+    <vcpupin vcpu='1' cpuset='9'/>
+    <vcpupin vcpu='2' cpuset='10'/>
+    <vcpupin vcpu='3' cpuset='11'/>
+    <vcpupin vcpu='4' cpuset='12'/>
+    <vcpupin vcpu='5' cpuset='13'/>
+    <vcpupin vcpu='6' cpuset='14'/>
+    <vcpupin vcpu='7' cpuset='15'/>
+  </cputune>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-2.10'>hvm</type>
+    <loader readonly='yes' type='pflash'>/usr/share/ovmf/x64/OVMF_CODE.fd</loader>
+    <nvram>/var/lib/libvirt/qemu/nvram/gaming_VARS.fd</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv>
+      <relaxed state='on'/>
+      <vapic state='on'/>
+      <spinlocks state='on' retries='8191'/>
+      <synic state='on' />
+      <stimer state='on' />
+      <reset state='on' />
+    </hyperv>
+    <vmport state='off'/>
+    <kvm>
+      <hidden state='on' />
+    </kvm>
+  </features>
+  <cpu mode='host-passthrough' check='none'>
+    <topology sockets='1' cores='4' threads='2' />
+  </cpu>
+  <clock offset='localtime'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+    <timer name='hypervclock' present='yes'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none' io='native'/>
+      <source file='/mnt/data/rmbl/VMs/gaming.qcow2'/>
+      <target dev='sda' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/home/rmbl/Downloads/virtio-win-0.1.141.iso'/>
+      <target dev='hda' bus='ide'/>
+      <readonly/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
+    </controller>
+    <controller type='ide' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x7'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci1'>
+      <master startport='0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci2'>
+      <master startport='2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci3'>
+      <master startport='4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x2'/>
+    </controller>
+    <interface type='bridge'>
+      <mac address='52:54:00:a3:da:77'/>
+      <source bridge='br0'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x01' function='0x0'/>
+    </interface>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <sound model='ich9'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+    </sound>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x2b' slot='0x00' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x04d9'/>
+        <product id='0x0167'/>
+      </source>
+      <address type='usb' bus='0' port='1'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x046d'/>
+        <product id='0xc332'/>
+      </source>
+      <address type='usb' bus='0' port='4'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0xceeb'/>
+        <product id='0x1156'/>
+      </source>
+      <address type='usb' bus='0' port='5'/>
+    </hostdev>
+    <redirdev bus='usb' type='spicevmc'>
+      <address type='usb' bus='0' port='2'/>
+    </redirdev>
+    <redirdev bus='usb' type='spicevmc'>
+      <address type='usb' bus='0' port='3'/>
+    </redirdev>
+    <memballoon model='virtio'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+    </memballoon>
+  </devices>
+  <qemu:commandline>
+    <qemu:env name='QEMU_AUDIO_DRV' value='pa'/>
+    <qemu:env name='QEMU_PA_SERVER' value='127.0.0.1'/>
+  </qemu:commandline>
+</domain>
